@@ -3,15 +3,15 @@
 /*
     Free complex image.
 */
-    void freeImage(ers1GenericImage *image)
+void freeImage(ers1GenericImage *image)
 {
-/*
-   Free image buffer.
-*/
+   /*
+      Free image buffer.
+   */
    free(image->image);
-/*
-   Free space for image structure
-*/
-   free(image); 
+   /*
+      Free space for image structure
+   */
+   free(image);
    return;
 }
