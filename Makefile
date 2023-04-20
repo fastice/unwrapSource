@@ -1,25 +1,83 @@
-C =		gcc
-ROOTDIR =	/Users/ian
-PROGDIR =       $(ROOTDIR)/progs/GIT
-INCLUDEPATH =	$(ROOTDIR)/progs/GIT
-IHOME =		~
-BINDIR =	$(IHOME)/bin/$(MACHTYPE)
 #
-CFLAGS =	'-O3 -m32 -I$(INCLUDEPATH) $(COMPILEFLAGS)'
-CCFLAGS =  '-O3 -m32 -D$(MACHTYPE) $(COMPILEFLAGS) '
+# Modify this section to point to where stuff is.
+# Current names are for a specific file system.
+# ROOTDIR: root directory for code (e.g. /Users/username directory). Likely should change for linux
+# PROGDIR: location for top source code directory (default ROOTDIR/progs/GIT64)
+# BINHOME: root directory for binaries
+# BINNAME: archetecture dependent basename for bin dir
+# BINDIR: directory for binaries (default BINHOME/bin/BINNAME) (will create if doesn't exist)
+# INCLUDEPATH: include path (default PROGDIR anything else could cause a problem)
+# Various directors can be overridden with environment variable or from make command
+# make BINHOME=/a/path/to/binhome
+#
+# Base directory for code
+USER =	$(shell id -u -n)
+#
+# Default rootdir
+ifneq ($(ROOTDIR)),)
+	ROOTDIR =	/Users/$(USER)
+endif
+$(info ROOTDIR="$(ROOTDIR)")
+# Default root for source code
+ifneq ($(PROGDIR)),)
+	PROGDIR =       $(ROOTDIR)/progs/GIT64
+endif
+$(info PROGDIR ="$(PROGDIR)")
+#
+# Default location root for compiled programs
+ifneq ($(BINHOME)),)
+	BINHOME =		~$(USER)
+endif
+$(info BINHOME="$(BINHOME)")
+#
+# For historical reasons, can compile with 32-bit memory model using MEM=-m32
+# In almost all cases, should be compiled as 64bit.
+ifneq ($(MEM),-m32)
+	BINNAME=	$(MACHTYPE)
+	FFTDIR = $(MACHTYPE)-$(OSTYPE)
+else
+	BINNAME =	i386
+	FFTDIR = i386-$(OSTYPE)
+endif
+$(info BINNAME="$(BINNAME)")
+#
+# Default binary directory
+ifneq ($(BINDIR)),)
+	BINDIR =	$(BINHOME)/bin/$(BINNAME)
+endif
+$(info BINDIR="$(BINDIR)")
+#
+# Create bin dir if it doesn't exist
+$(shell mkdir -p $(BINDIR))
+#
+#
+# Default include path
+ifneq ($(INCLUDEPATH)),)
+	INCLUDEPATH =	$(PROGDIR)
+endif
+$(info INCLUDEPATH ="$(INCLUDEPATH)")
+#
+# Compiler stuff
+#
+C =		gcc
+CFLAGS =	'-O3 $(MEM) -I$(INCLUDEPATH) $(COMPILEFLAGS)'
+CCFLAGS =  '-O3 $(MEM) -D$(MACHTYPE) $(COMPILEFLAGS) '
 #-Wunused-variable'
 
 CCFLAGS1= '-O3'
 # uncomment to debug
-#CFLAGS =	'-g -m32 -I$(INCLUDEPATH) $(COMPILEFLAGS)'
-#CCFLAGS =  '-g -m32 -D$(MACHTYPE) $(COMPILEFLAGS)'
+#CFLAGS =	'-g $(MEM) -I$(INCLUDEPATH) $(COMPILEFLAGS)'
+#CCFLAGS =  '-g $(MEM) -D$(MACHTYPE) $(COMPILEFLAGS)'
 #CCFLAGS1= '-g'
-
-COMMON=	$(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/llToImageNew.o \
-			$(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/julianDay.o \
-			$(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/parseInputFile.o \
-			$(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/polintVec.o \
-			$(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/vectorFunc.o
+#
+# ******** SHOULD NOT NEED TO MODIFY BELOW HERE *********
+#
+COMMON=	        $(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/llToImageNew.o \
+		$(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/julianDay.o \
+                $(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/lltoxy1.o \
+		$(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/parseInputFile.o \
+		$(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/polintVec.o \
+		$(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/vectorFunc.o
 
 
 ERS1CODE =	ers1Code/$(MACHTYPE)-$(OSTYPE)/initComplexImage.o ers1Code/$(MACHTYPE)-$(OSTYPE)/rowIncrement.o \
@@ -58,7 +116,7 @@ TARGETS = unwrap
 
 all: $(TARGETS)
 
-UNWRAPDIRS =	unWrap ers1Code
+UNWRAPDIRS =	unWrap ers1Code $(PROGDIR)/clib $(PROGDIR)/cRecipes $(PROGDIR)/mosaicSource/common
 
 unwrap:	
 	@for i in ${UNWRAPDIRS}; do \
@@ -67,7 +125,7 @@ unwrap:
 			make FLAGS=$(CCFLAGS) INCLUDEPATH=$(INCLUDEPATH) PAF=1; \
 			cd $(PROGDIR); \
 		); done
-		gcc -m32 $(CCFLAGS1)   \
+		gcc $(MEM) $(CCFLAGS1)   \
                 unWrap/$(MACHTYPE)-$(OSTYPE)/unwrap.o $(UNWRAPCODE) $(ERS1CODE) $(COMMON)  $(STANDARD) $(RECIPES) \
                 -lm -o $(BINDIR)/unwrap
 
