@@ -7,6 +7,10 @@
 #include <stdlib.h>
 /*#include "ers1/getLocC_p/parfile.h"*/
 #include "mosaicSource/common/geocode.h"
+#include <ogr_core.h>
+#include <ogr_srs_api.h>
+#include <cpl_conv.h>
+#include <gdal.h>
 char *Abuf1, *Abuf2, *Dbuf1, *Dbuf2;
 int32_t llConserveMem = 999;
 

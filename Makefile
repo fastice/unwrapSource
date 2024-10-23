@@ -72,7 +72,8 @@ CCFLAGS1= '-O3'
 #
 # ******** SHOULD NOT NEED TO MODIFY BELOW HERE *********
 #
-COMMON=	        $(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/llToImageNew.o \
+COMMON=	        $(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/geojsonCode.o \
+                $(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/llToImageNew.o \
 		$(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/julianDay.o \
                 $(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/lltoxy1.o \
 		$(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/parseInputFile.o \
@@ -127,5 +128,5 @@ unwrap:
 		); done
 		gcc $(MEM) $(CCFLAGS1)   \
                 unWrap/$(MACHTYPE)-$(OSTYPE)/unwrap.o $(UNWRAPCODE) $(ERS1CODE) $(COMMON)  $(STANDARD) $(RECIPES) \
-                -lm -o $(BINDIR)/unwrap
+                -lm -lgdal -o $(BINDIR)/unwrap
 
