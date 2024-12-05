@@ -136,5 +136,5 @@ unwrap:
 		); done
 		gcc $(MEM) $(CCFLAGS1)   \
                 unWrap/$(MACHTYPE)-$(OSTYPE)/unwrap.o $(UNWRAPCODE) $(ERS1CODE) $(COMMON)  $(STANDARD) $(RECIPES) \
-                -lm -lgdal -o $(BINDIR)/unwrap
+                -lm $(GDAL) -o $(BINDIR)/unwrap
 
