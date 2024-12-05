@@ -8,6 +8,9 @@ OBJS=  initComplexImage.o rowIncrement.o rowPtr.o initPowerImage.o \
         freeImage.o computePhase.o initPhaseImage.o getAzVaryingShifts.o \
         interpolateShifts.o earthRadius.o
 
+MACHTYPE = $(shell uname -m)
+OSTYPE = $(shelf uname -s)
+
 $(shell mkdir -p $(MACHTYPE)-$(OSTYPE))
 
 .KEEP_STATE:
