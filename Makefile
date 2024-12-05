@@ -134,7 +134,7 @@ unwrap:
 			make FLAGS=$(CCFLAGS) INCLUDEPATH=$(INCLUDEPATH) PAF=1; \
 			cd $(PROGDIR); \
 		); done
-		gcc $(MEM) $(CCFLAGS1)   \
+		g++ $(MEM) $(CCFLAGS1)   \
                 unWrap/$(MACHTYPE)-$(OSTYPE)/unwrap.o $(UNWRAPCODE) $(ERS1CODE) $(COMMON)  $(STANDARD) $(RECIPES) \
                 -lm $(GDAL) -o $(BINDIR)/unwrap
 
