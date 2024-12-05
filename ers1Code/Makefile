@@ -9,7 +9,7 @@ OBJS=  initComplexImage.o rowIncrement.o rowPtr.o initPowerImage.o \
         interpolateShifts.o earthRadius.o
 
 MACHTYPE = $(shell uname -m)
-OSTYPE = $(shelf uname -s)
+OSTYPE = $(shell uname -s)
 
 $(shell mkdir -p $(MACHTYPE)-$(OSTYPE))
 
