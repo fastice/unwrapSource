@@ -64,7 +64,7 @@ C =		gcc
 #
 CFLAGS =	'-O3 $(MEM) -I$(INCLUDEPATH) $(COMPILEFLAGS)'
 CCFLAGS =  '-O3 $(MEM) $(COMPILEFLAGS) '
-GDAL = -lgdal -lcurl  -lsqlite3 -llzma -lpoppler -lopenjp2 -lssh2 -llcms2
+GDAL = -lgdal -lproj -lcurl  -lsqlite3 -llzma -lpoppler -lopenjp2 -lssh2 -llcms2
 #
 CCFLAGS1= -O3 
 #-no-pie
@@ -75,13 +75,13 @@ CCFLAGS1= -O3
 #
 ifneq ("$(OSTYPE)", "Darwin")
 	NOPIE =	-no-pie
-	GDAL = -lgdal -lcurl  -lsqlite3 -llzma -lpoppler -lopenjp2 -lssh2 -llcms2
+	GDAL = -lgdal -lproj -lcurl  -lsqlite3 -llzma -lpoppler -lopenjp2 -lssh2 -llcms2
 	CFLAGS =	'-O3 $(MEM) -I$(INCLUDEPATH) $(COMPILEFLAGS)'
 	CCFLAGS =  '-O3 $(MEM) $(COMPILEFLAGS) '
 else
 	GDALLIB = /opt/homebrew/lib
 	GDALINCLUDE = /opt/homebrew/include
-	GDAL = -lgdal -L/opt/homebrew/lib
+	GDAL = -lgdal -lproj -L/opt/homebrew/lib
 	CFLAGS =	'-O3 $(MEM) -I$(INCLUDEPATH) $(COMPILEFLAGS) -I$(GDALINCLUDE)'
 	CCFLAGS =  '-O3 $(MEM) $(COMPILEFLAGS) -I$(GDALINCLUDE)'
 endif
@@ -92,6 +92,8 @@ COMMON=	        $(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/geojsonCode
                 $(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/llToImageNew.o \
 		$(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/julianDay.o \
                 $(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/lltoxy1.o \
+	$(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/grimpProj.o \
+	$(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/xytoll1.o \
 		$(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/parseInputFile.o \
 		$(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/polintVec.o \
 		$(PROGDIR)/mosaicSource/common/$(MACHTYPE)-$(OSTYPE)/vectorFunc.o
@@ -142,7 +144,7 @@ unwrap:
 			make FLAGS=$(CCFLAGS) INCLUDEPATH=$(INCLUDEPATH) PAF=1; \
 			cd $(PROGDIR); \
 		); done
-		g++ $(MEM) $(CCFLAGS1)   \
+		g++ $(MEM) $(CCFLAGS1) -fopenmp  \
                 unWrap/$(MACHTYPE)-$(OSTYPE)/unwrap.o $(UNWRAPCODE) $(ERS1CODE) $(COMMON)  $(STANDARD) $(RECIPES) \
                 -lm $(GDAL) -o $(BINDIR)/unwrap
 
